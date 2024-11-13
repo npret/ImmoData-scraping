@@ -41,7 +41,9 @@ def get_cookies_from_website(url: str) -> dict[str, str]:
 
 # Set up the URL and headers
 #url = 'https://www.immoweb.be/en/classified/new-real-estate-project-apartments/for-sale/gent/9000/20314083'
-url = 'https://www.immoweb.be/en/classified/apartment/for-sale/saint-gilles/1060/20306773'
+#url = 'https://www.immoweb.be/en/classified/apartment/for-sale/saint-gilles/1060/20306773'
+# URL with a fireplace:
+url = 'https://www.immoweb.be/en/classified/house/for-sale/wetteren/9230/20316344'
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'}
 
 # Use the get_cookies_from_website function to retrieve cookies
@@ -74,8 +76,7 @@ def parse_listing(soup):
     """
 
 
-# Attempt to select the custom tag iw-classified-address
-
+    # Select the custom tag iw-classified-address
     address_container = soup.find('iw-classified-address', class_='classified__information--address')
 
     # Debugging: Print the address container to verify it's found
@@ -85,24 +86,27 @@ def parse_listing(soup):
 
     # Ensure address_container is not None before proceeding
     if address_container is not None:
-        address_text = address_container.get_text(separator=" ", strip=True)
-    
-    # Debugging: Print the extracted text
-        print("Address Text:", address_text)
-    
-    # Extract the postal code by splitting the text and finding the numerical part
-        postal_code_match = re.search(r'\b\d{4,5}\b', address_text)
-    
-        if postal_code_match:
-            locality = postal_code_match.group()
-            print("Postal Code:", locality)
+    # Check for children of the address container
+        children = address_container.find_all(recursive=False)
+        print("Children:", children)
+
+    # Iterate through children to find text content
+        for child in children:
+        # Concatenate all contents within each child
+            text = ''.join(str(content) for content in child.contents).strip()
+            print("Child Text:", text)
+
+        # Extract postal code by searching for a numerical part
+            postal_code_match = re.search(r'\b\d{4,5}\b', text)
+        
+            if postal_code_match:
+                locality = postal_code_match.group()
+                print("Postal Code:", locality)
+                break
         else:
-            print("Postal code not found in the address text.")
+            print("Postal code not found in any child elements.")
     else:
         print("Address container not found.")
-
-
-
 
     # get property type - need strategy
     property_type = None
@@ -140,6 +144,93 @@ def parse_listing(soup):
                 living_area = ' - '.join(living_area_text)
             break
 
+    # Get bin value for if kitchen is equipped or not
+    kitchen_th = soup.find('th', string="Kitchen type")
+    if kitchen_th:
+        kitchen_td = kitchen_th.find_next_sibling('td')
+        if kitchen_td:
+            kitchen_type = ''.join(str(content) for content in kitchen_td.contents).strip().lower()
+    
+        # Determine if the kitchen is equipped
+            is_kitchen_equipped = 1 if kitchen_type in ["installed", "hyper equipped"] else 0
+        else:
+            is_kitchen_equipped = None
+    else:
+        is_kitchen_equipped = None
+    furnished_th = soup.find('th', string="Furnished")
+
+    # Get bin value for if furnished or not.
+    is_furnished = None
+
+    if furnished_th:
+        furnished_td = furnished_th.find_next_sibling('td')
+        if furnished_td:
+            furnished_status = ''.join(str(content) for content in furnished_td.contents).strip().lower()
+            print("Processed furnished status:", furnished_status)
+        
+            is_furnished = 1 if furnished_status == "yes" else 0
+        else:
+            is_furnished = None
+    else:
+        is_furnished = None
+
+    fireplace_th = soup.find('th', string="How many fireplaces?")
+
+    # Get bin value for fireplace.
+    is_open_fire = None 
+
+    if fireplace_th:
+        fireplace_td = fireplace_th.find_next_sibling('td')
+        if fireplace_td:
+            fireplace_count_text = ''.join(str(content) for content in fireplace_td.contents).strip()
+        
+            if fireplace_count_text.isdigit() and int(fireplace_count_text) > 0:
+                is_open_fire = 1
+            else:
+                is_open_fire = 0
+    else:
+        is_open_fire = None
+    
+    # Get bin value for terrace + terrace area
+    terrace_th = soup.find('th', string="Terrace surface")
+
+    is_terrace = None
+    terrace_area = None  
+
+    if terrace_th:
+        terrace_td = terrace_th.find_next_sibling('td')
+        if terrace_td:
+            terrace_text = ''.join(str(content) for content in terrace_td.contents).strip()        
+            terrace_text = re.sub(r'\D', '', terrace_text)
+        
+            is_terrace = 1 if terrace_text else 0
+        
+            if terrace_text.isdigit():
+                terrace_area = int(terrace_text)
+    else:
+        is_terrace = 0
+        terrace_area = None
+
+    #Get in value if garden + garden area
+    garden_th = soup.find('th', string="Garden surface")
+
+    is_garden = None
+    garden_area = None 
+
+    if garden_th:
+        garden_td = garden_th.find_next_sibling('td')
+        if garden_td:
+            garden_text = ''.join(str(content) for content in garden_td.contents).strip()
+        
+            garden_text = re.sub(r'\D', '', garden_text)  # Remove any non-digit characters
+        
+            is_garden = 1 if garden_text else 0
+        
+            if garden_text.isdigit():
+                garden_area = int(garden_text)
+    else:
+        is_garden = 0
+        garden_area = None
 
     return {
         "locality": locality,
@@ -149,13 +240,13 @@ def parse_listing(soup):
         #"type of sale": sale_type,
         "number of rooms": rooms_number,
         "living area": living_area,
-        #"fully equipped kitchen": is_kitchen_equipped,
-        #"furnished": is_furnished,
-        #"open fire": is_open_fire,
-        #"terrace": is_terrace,
-        #"terrace area": terrace_area,
-        #"garden": is_garden,
-        #"garden area": garden_area,
+        "fully equipped kitchen": is_kitchen_equipped,
+        "furnished": is_furnished,
+        "open fire": is_open_fire,
+        "terrace": is_terrace,
+        "terrace area": terrace_area,
+        "garden": is_garden,
+        "garden area": garden_area,
         #"surface of the land": surface_of_land,
         #"surface area of the plot of land": surface_area_of_land,
         #"number of facades": facades_number,
