@@ -33,10 +33,10 @@ def get_cookies_from_website(url: str) -> dict[str, str]:
 
     # Format cookies for scraping using different package
     cookies_dict = {cookie['name']: cookie['value'] for cookie in cookies}
-    keys = ['immoweb_session', 'XSRF-TOKEN', '__cf_bm']
-    final_cookies = {key: cookies_dict[key] for key in keys}
+    #keys = ['immoweb_session', 'XSRF-TOKEN', '__cf_bm']
+    #final_cookies = {key: cookies_dict[key] for key in keys}
 
-    return final_cookies
+    return cookies_dict
 
 def get_url_list(url: str) -> list[str]:
     """
@@ -97,11 +97,12 @@ def get_url_list(url: str) -> list[str]:
             f.write(link+f"\n")
                                  
 if __name__ == "__main__":
-    url = 'https://www.immoweb.be/en/search/house-and-apartment/for-sale?countries=BE&isALifeAnnuitySale=false&page=1&orderBy=relevance'
-    #cookies = get_cookies_from_website(url)
-    #print(cookies)  # You can save this to a file or pass it to the Scrapy spider
+    #url = 'https://www.immoweb.be/en/search/house-and-apartment/for-sale?countries=BE&isALifeAnnuitySale=false&page=1&orderBy=relevance'
+    url = 'https://www.immoweb.be'
+    cookies = get_cookies_from_website(url)
+    print(cookies)  # You can save this to a file or pass it to the Scrapy spider
     #url_list = get_url_list(url)
     #print(url_list)
     #print(len(url_list))
-    get_url_list(url)
+    #get_url_list(url)
     
