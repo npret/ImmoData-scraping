@@ -1,13 +1,32 @@
 # Imports
 
-from SeleniumFunctions import get_cookies_from_website, get_url_list
-from SeleniumPat import get_urls
-from multiprocessing import Pool
+from GetListingURLs import get_url_list, quick_get_urls
+from GetListingDetails import get_dict_from_url
+from CreateDataFrame import parse_listing_info
+from requests import Session
+import pandas as pd
 
-# Get cookies
+# Main script
 
-#url = 'https://www.immoweb.be'
-#cookies = get_cookies_from_website(url)
+if __name__ == "__main__":
+
+    # Define headers
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',} 
+    number_pages = 333
+    session = requests.Session()
+    # Get listing URLs
+    quick_get_urls(number_pages, headers, session)
+
+    #get_url_list(headers, session)
+
+    # Get listings details, only relevant info
+
+    #relevant_info_dicts = 
+
+    # Parse to pd.DataFrame
+    df = parse_listing_info(relevant_info_dicts)
+    df.to_csv('ImmowebScrapingResult.csv')
+
 
 # Get URLs
 
