@@ -35,25 +35,37 @@ def get_dict_from_url(url: str, headers: dict[str:str], session: Session) -> dic
 def read_parse_listings(url_file_path: str, headers: dict[str:str], session: Session) -> list[dict]:
 
     result = []
+    compound_urls = []
+    individual_urls = []
 
-    with open('url.txt', 'r') as file:
+    with open(url_file_path, 'r') as file:
         for line in file:
-            url = file.readline().strip()
+            url = line.strip()
 
             listing_dict = get_dict_from_url(url, headers)
 
             if is_compound_sale(listing_dict):
                 print(f"Solving compound listing for {url}")
+                compound_urls.append(url + "\n")
                 soup = get_soup(url, headers, session, None)
                 individual_listings = get_compound_sale_urls(soup, listing_dict)
-                # Remove compound listing url
                 for listing_url in individual_listings:
-                    # append individual listing url
+                    individual_urls.append(listing_url + "\n")
                     individual_dict = get_dict_from_url(listing_url, headers)
                     result.append(individual_dict)
 
             else:
                 result.append(listing_dict)
+
+    with open(url_file_path, "r") as f:
+        lines = f.readlines()
+    with open(url_file_path, "w") as f:
+        for line in lines:
+            if line not in compound_urls:
+                f.write(line)
+    with open(url_file_path, "a") as f:
+        for line in individual_urls:
+            f.write(line)
 
     return result
 
