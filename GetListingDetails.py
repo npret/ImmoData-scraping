@@ -87,15 +87,36 @@ def quick_parse(url_list: list[str], num_processes: int = None) -> list[dict]:
 
     return listing_dicts
 
+def quick_relevant(list_dicts_listings: list[dict], num_processes: int = None) -> list[dict]:
 
-def get_relevant_info(list_dicts_listings: list[dict]) -> list[dict]:
+    if num_processes is None:
+        num_processes = cpu_count()  # Use the number of available CPUs by default
+
+    dict_index_ranges = [range(i, len(list_dicts_listings), num_processes) for i in range(num_processes)]
+
+    relevant_dicts = []
+
+    with get_context('spawn').Pool(processes=num_processes) as pool:
+        results = pool.starmap(get_relevant_info, [(list_dicts_listings, dict_index_range) for dict_index_range in dict_index_ranges])
+
+        for result in results:
+            relevant_dicts_dicts.extend(result)
+            
+    return relevant_dicts
+
+def get_relevant_info(list_dicts_listings: list[dict], dict_index_range) -> list[dict]:
     
     # List will contain dictionaries for each listing containing relevant info
     relevant_info_list = []
     
     # Iterate over each listing in the main dictionary.
-    for listing in list_dicts_listings:
+    for i in dict_index_range:
         
+        listing = list_dicts_listings[i]
+
+        id = None 
+        id = listing.get('id')
+
         locality = None
         locality = listing.get('property', {}).get('location', {}).get('postalCode')
 
@@ -131,7 +152,7 @@ def get_relevant_info(list_dicts_listings: list[dict]) -> list[dict]:
         is_furnished = None
         furnished_status = listing.get('transaction', {}).get('sale', {}).get('isFurnished')
         if furnished_status is not None and furnished_status != "None" and furnished_status != "":
-            furnished_status = furnished_status.lower()
+            #furnished_status = furnished_status.lower()
             if furnished_status == "yes":
                 is_furnished = 1
             else:
@@ -210,7 +231,8 @@ def get_relevant_info(list_dicts_listings: list[dict]) -> list[dict]:
         building_state = listing.get('property', {}).get('building', {}).get('condition')
         
         #Extract info from listings into a dictionary
-        relevant_info = {'Locality': locality,
+        relevant_info = {'id': id,
+                         'Locality': locality,
                          'Type of property': property_type,
                          'Subtype of property': property_subtype,
                          'Price': price,
@@ -269,12 +291,13 @@ def get_compound_sale_urls(soup: BeautifulSoup) -> list[str]:
 
 if __name__ == "__main__":
 
-    number_pages = 10
+    number_pages = 2
     start_time_multi = perf_counter()
 
     list = quick_get_urls(number_pages)
     dicts = quick_parse(list)
-    print(len(dicts))
-    print(dicts[0])
-    print(dicts[100])
+    relevant = quick_relevant(dicts)
+    print(len(relevant))
+    print(relevant[0])
+    print(relevant[-1])
     print(f"\nTime spent inside the multi loop: {perf_counter() - start_time_multi} seconds.")  
