@@ -58,8 +58,163 @@ def read_parse_listings(url_file_path: str, headers: dict[str:str], session: Ses
     return result
 
 def get_relevant_info(list_dicts_listings: list[dict]) -> list[dict]:
+    
+    # List will contain dictionaries for each listing containing relevant info
+    relevant_info_list = []
+    
+    # Iterate over each listing in the main dictionary.
     for listing in list_dicts_listings:
-        pass
+        
+        locality = None
+        locality = listing.get('property', {}).get('location', {}).get('postalCode')
+
+        property_type = None
+        property_type = listing.get('property', {}).get('type')
+
+        property_subtype = None
+        property_subtype = listing.get('property', {}).get('subtype')
+
+        price = None
+        price = listing.get('transaction', {}).get('sale', {}).get('price')
+
+        sale_type = None
+        sale_type = listing.get('price', {}).get('type')
+
+        rooms = None
+        rooms = listing.get('property', {}).get('bedroomCount')
+
+        living_area = None
+        living_area = listing.get('property', {}).get('netHabitableSurface')
+
+        # Need to make sure what the different status posibilies are
+        is_kitchen_equipped = None
+        kitchen_equipped_status = listing.get('property', {}).get('kitchen', {}).get('type')
+        if kitchen_equipped_status is not None and kitchen_equipped_status != "None" and kitchen_equipped_status != "":
+            kitchen_equipped_status = kitchen_equipped_status.lower()
+            if kitchen_equipped_status == "installed":
+                is_kitchen_equipped = 1
+            else:
+                is_kitchen_equipped = 0
+
+        # Need to double check status possibilities
+        is_furnished = None
+        furnished_status = listing.get('transaction', {}).get('sale', {}).get('isFurnished')
+        if furnished_status is not None and furnished_status != "None" and furnished_status != "":
+            furnished_status = furnished_status.lower()
+            if furnished_status == "yes":
+                is_furnished = 1
+            else:
+                is_furnished = 0
+
+        is_fireplace = None
+        fireplace_status = listing.get('property', {}).get('fireplaceExists')
+        if fireplace_status is not None and fireplace_status != "None" and fireplace_status != "":
+            if fireplace_status == True:
+                is_fireplace = 1
+            else:
+                is_fireplace = 0
+
+        is_terrace = None
+        terrace_status = listing.get('property', {}).get('hasTerrace')
+        if terrace_status is not None and terrace_status != "None" and terrace_status != "":
+            if terrace_status == True:
+                is_terrace = 1
+            else: 
+                is_terrace = 0
+
+        terrace_area = None
+        terrace_area = listing.get('property', {}).get('terraceSurface')
+
+        is_garden = None
+        garden_status = listing.get('property', {}).get('hasGarden')
+        if garden_status is not None and garden_status != "None" and garden_status != "":
+            if garden_status == True:
+                is_garden = 1
+            else:
+                is_garden = 0
+
+        garden_area = None
+        garden_area = listing.get('property', {}).get('gardenSurface')
+
+        # Garden area twice??
+        surface_land = None
+        surface_land = listing.get('property', {}).get('gardenSurface')
+
+        #surface_land + living area
+        surface_area_plot = None
+
+        def safe_convert(value):
+        # Check if the value is a number and not string 'None' or empty
+            if value and value != 'None':
+                try:
+                    return float(value)  # convert to float
+                except ValueError:
+                    return None  # Return None if can't be converted
+            return None  # Return None if value is 'None' or None
+
+        # Convert living_area and surface_land safely for math reasons
+        living_area = safe_convert(living_area)
+        surface_land = safe_convert(surface_land)
+
+        # Calculate surface_area_plot
+        if living_area is not None and surface_land is not None:
+            surface_area_plot = living_area + surface_land
+        elif living_area is None and surface_land is not None:
+            surface_area_plot = surface_land
+        elif living_area is not None and surface_land is None:
+            surface_area_plot = living_area
+
+        facades = None
+        facades = listing.get('property', {}).get('building', {}).get('facadeCount')
+
+        is_pool = None
+        pool_status = listing.get('property', {}).get('hasSwimmingPool')
+        if pool_status is not None and pool_status != "None" and pool_status != "":
+            if pool_status == True:
+                is_pool = 1
+            else:
+                is_pool = 0
+
+        building_state = None
+        building_state = listing.get('property', {}).get('building', {}).get('condition')
+        
+        #Extract info from listings into a dictionary
+        relevant_info = {'Locality': locality,
+                         'Type of property': property_type,
+                         'Subtype of property': property_subtype,
+                         'Price': price,
+                         'Type of sale': sale_type,
+                         'Number of rooms': rooms,
+                         'Living Area': living_area,
+                         'Fully equipped kitchen': is_kitchen_equipped,
+                         'Furnished': is_furnished,
+                         'Fireplace': is_fireplace,
+                         'Terrace': is_terrace,
+                         'Terrace area': terrace_area,
+                         'Garden': is_garden,
+                         'Garden area': garden_area,
+                         'Surface of the land': surface_land,
+                         'Surface area of the plot of land': surface_area_plot,
+                         'Number of facades': facades,
+                         'Swimming pool': is_pool,
+                         'State of the building': building_state
+                        }
+
+        # Add dictionary for listing to our list.
+        relevant_info_list.append(relevant_info)
+
+    return relevant_info_list
+    
+# Load mock data for testing get_relevant_info()
+with open('mock_data.json', 'r') as file:
+    mock_data = json.load(file)
+
+if isinstance(mock_data, dict):
+    mock_data = [mock_data]
+
+test_result = get_relevant_info(mock_data)
+print(test_result)
+
     #write relevant code to extract the particular information needed from the listing dicts
     #place into new dict containing only relevant information
     #def get_empty_data():
