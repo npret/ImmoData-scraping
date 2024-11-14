@@ -9,9 +9,9 @@ from HelperFunctions import get_soup
 
 # Functions
 
-def get_dict_from_url(url: str, headers: dict[str:str], session: Session) -> dict:
+def get_dict_from_url(url: str, headers: dict[str:str], session: Session, line_number: int) -> dict:
 
-    soup = get_soup(url, headers, session, None)
+    soup = get_soup(url, headers, session, line_number)
 
     # Parse the content to find the <script> tag containing "window.classified"
     script_tag = soup.find('script', string=re.compile(r'window\.classified\s*='))
@@ -39,10 +39,10 @@ def read_parse_listings(url_file_path: str, headers: dict[str:str], session: Ses
     individual_urls = []
 
     with open(url_file_path, 'r') as file:
-        for line in file:
+        for line_number, line in enumerate(file, start= 1):
             url = line.strip()
 
-            listing_dict = get_dict_from_url(url, headers)
+            listing_dict = get_dict_from_url(url, headers, session, line_number)
 
             if is_compound_sale(listing_dict):
                 print(f"Solving compound listing for {url}")
@@ -51,7 +51,7 @@ def read_parse_listings(url_file_path: str, headers: dict[str:str], session: Ses
                 individual_listings = get_compound_sale_urls(soup, listing_dict)
                 for listing_url in individual_listings:
                     individual_urls.append(listing_url + "\n")
-                    individual_dict = get_dict_from_url(listing_url, headers)
+                    individual_dict = get_dict_from_url(listing_url, headers, session, None)
                     result.append(individual_dict)
 
             else:

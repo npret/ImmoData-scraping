@@ -9,8 +9,8 @@ def get_url_list(num_pages: int, headers: dict[str:str], session: Session) -> li
     url_list = []
 
     with open('url.txt', 'w') as f:
-        for page_number in range(num_pages):
-            base_url = f'https://www.immoweb.be/en/search/house-and-apartment/for-sale?countries=BE&isALifeAnnuitySale=false&page={page_number + 1}&orderBy=relevance'
+        for page_number in (range(num_pages) + 1):
+            base_url = f'https://www.immoweb.be/en/search/house-and-apartment/for-sale?countries=BE&isALifeAnnuitySale=false&page={page_number}&orderBy=relevance'
             
             try:
                 soup = get_soup(base_url, headers, session, page_number)

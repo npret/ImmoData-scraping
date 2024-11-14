@@ -8,7 +8,10 @@ from bs4 import BeautifulSoup
 
 def get_soup(url: str, headers: dict[str:str], session: Session, page_number: int):
     response = session.get(url, headers= headers)
-    print(f"Request for page {page_number + 1} - response : {response.status_code}")
+    if page_number != None:
+        print(f"Request for page {page_number} - response : {response.status_code}")
+    else:
+        print(f"Solving compound listing - Getting individual url")
     content = response.content
     soup = BeautifulSoup(content, 'html.parser')
     return soup
