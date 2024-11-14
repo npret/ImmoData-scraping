@@ -51,7 +51,7 @@ def quick_get_urls(num_pages:int) -> list[str]:
 
 if __name__ == "__main__":
 
-    number_pages = 333
+    number_pages = 20
     start_time_multi = perf_counter()
 
     list = quick_get_urls(number_pages)
