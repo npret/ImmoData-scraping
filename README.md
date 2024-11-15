@@ -24,15 +24,23 @@ The html support for this scraper will be scheduled at a later date. Stay tuned!
 ## **Contributors**
 Kevin - https://github.com/kvnpotter
 - Day 1: 
-  - 
+  - Worked on solution to acquire data from website using selenium (obsolete, deprecated)
 - Day 2:
-  - 
+  - Continued work on getting data using Selenium and scrapy spider (obsolete, deprecated)
+  - Found solution using Requests and Beautifulsoup
+  - Found dictionary data structure on listing page allowing to obtain data rapidly
+  - Started developing functions to get URLs of search results, getting data from individual URLs
 - Day 3:
-  - 
-- Day 4: 
-  - 
+  - Continued development on functions to obtain data from individual URLs
+  - Addition of multiprocessing solution to speed up process
+  - Finalized data acquisition - up to getting raw data
+- Day 4:
+  - Wrote docstrings for functions, verified type hints
+  - Finalized data acquisition - search result URLs, dealing with compound sale listings, getting raw data from individual URLs, transforming to required data, multiprocessing.
+  - Structure of repo and code in modules, integration into main.py
 - Challenges:
-  - 
+  - Initial startup of project phase complicated, leading to multiple changes in direction
+  - Attribution of tasks not always evident in such a project
 
 Nicole - https://github.com/npret
 - Day 1: 
