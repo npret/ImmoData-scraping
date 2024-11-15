@@ -2,7 +2,7 @@
 
 ![Belgian houses cartoon.](https://www.shutterstock.com/image-vector/seamless-border-cute-retro-houses-600nw-1111423082.jpg)
 
-[Description](#Description)     |       [Installation](#Installation)    |       [Usage](#Usage)    |       [Visuals](#Visuals)     |       [Contributors](#Contributors)    |      [Timeline & WoW](#Timeline&WoW)       |       [List of Improvements](#list-of-improvements)  
+[Description](#Description)     |       [Installation](#Installation)    |       [Usage](#Usage)    |       [Visuals](#Visuals)     |       [Contributors](#Contributors)    |      [Timeline](#Timeline)       |       [List of Improvements](#list-of-improvements)  
 
 ## **Description**
 Scraping real estate data from a website.
@@ -29,7 +29,7 @@ Nicole - https://github.com/npret
 Patrycja - https://github.com/pschchowah
 
 
-## **Timeline & WoW**
+## **Timeline**
 12 Nov 2024 - project initiated at BeCode Brussels AI & Data Science Bootcamp
 
 15 Nov 2024 - project phase (web scraping and data cleaning) ended
