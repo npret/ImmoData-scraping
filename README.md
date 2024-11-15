@@ -36,15 +36,22 @@ Kevin - https://github.com/kvnpotter
 
 Nicole - https://github.com/npret
 - Day 1: 
-  - 
+  - Developed solution to get data points from HTML structure using Xpaths (obsolete)
+  - Worked on initial solution to deal with pagination (to get urls)
 - Day 2:
-  - 
+  - Course change: Moved from Scrapy to BeautifulSoup and Selenium
+  - Reworked solution to extract data points using bs4 (obsolete)
 - Day 3:
-  - 
+  - Course change: Keven found a solution to extract all data.
+  - Developed get_relevant_info function to extract specific data points from dictionaries.
 - Day 4: 
-  - 
+  - Refined get_relevant_info function
+  - Researched data cleaning best practices
+  - Cleaned dataset(removed duplicates, corrected dtypes, added placeholders for NaN values)
 - Challenges:
-  - 
+  - After an initial challenge in dividing responsibilities, our team collaborated effectively, with each member taking ownership of a project section.
+  - Initially struggled to decide on a direction, which rendered some of my early work obsolete. However, the previous work informed and improved the next iteration of my section.
+  - Github was giving problems.
 
 Patrycja - https://github.com/pschchowah
 - Day 1: 
