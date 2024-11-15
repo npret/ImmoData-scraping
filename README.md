@@ -2,7 +2,7 @@
 
 ![Belgian houses cartoon.](https://www.shutterstock.com/image-vector/seamless-border-cute-retro-houses-600nw-1111423082.jpg)
 
-[Introduction](#Introduction)     |     [Description](#Description)     |       [Installation](#Installation - Environment setup)    |       [Usage](#Usage)    |[Contributors](#Contributors)    |      [Timeline](#Timeline)       |       [List of Improvements](#list-of-improvements)  
+[Introduction](#Introduction)     |     [Description](#Description)     |       [Installation-Environment setup](#Installation-Environment-setup)    |       [Usage](#Usage)    |[Contributors](#Contributors)    |      [Timeline](#Timeline)       |       [List of Improvements](#list-of-improvements)  
 
 ## **Introduction**
 
@@ -48,7 +48,7 @@ Packages used:
 - re
 - pandas
 
-## **Installation - Environment setup**
+## **Installation-Environment setup
 
 You can create a virtual environment for the script using venv.
 ```shell
