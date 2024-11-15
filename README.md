@@ -7,13 +7,16 @@
 ## **Description**
 Scraping real estate data from a website.
 
-More info to be added!
+This programme scrapes houses and apartments data from immoweb.be by: 
+- taking the URL listings
+- getting relevant info for each URL
+- writing the data to a CSV file
 
 ## **Installation**
 You can 'git clone' the repository and use it locally.
 
 ## **Usage**
-Packages to be installed are: requests, BeautifulSoup, json and os (requirements file is not available at this point).
+Packages to be installed are: requests, BeautifulSoup, json, os and pandas (requirements file is not available at this point).
 
 ## **Visuals**
 The html support for this scraper will be scheduled at a later date. Stay tuned!
@@ -28,6 +31,8 @@ Patrycja - https://github.com/pschchowah
 
 ## **Timeline**
 12 Nov 2024 - project initiated at BeCode Brussels AI & Data Science Bootcamp
+
+15 Nov 2024 - project phase (web scraping and data cleaning) ended
 
 
 ## **List of Improvements**
