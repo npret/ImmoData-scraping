@@ -7,8 +7,8 @@ import json
 import re
 from time import perf_counter
 from multiprocessing import get_context, cpu_count, Pool
-from HelperFunctions import get_soup
-from GetListingURLs import quick_get_urls, get_url_list
+from ImmoWebScraper.HelperFunctions import get_soup
+from ImmoWebScraper.GetListingURLs import quick_get_urls, get_url_list
 
 # Functions
 

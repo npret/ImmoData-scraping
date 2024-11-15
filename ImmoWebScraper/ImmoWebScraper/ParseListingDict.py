@@ -2,8 +2,8 @@
 
 from multiprocessing import get_context, cpu_count, Pool
 import json
-from GetListingURLs import quick_get_urls
-from ScrapeListings import quick_parse
+from ImmoWebScraper.GetListingURLs import quick_get_urls
+from ImmoWebScraper.ScrapeListings import quick_parse, is_compound_sale
 
 def quick_relevant(list_dicts_listings: list[dict],
                    num_processes: int = None) -> list[dict]:
@@ -160,7 +160,14 @@ def get_relevant_info(list_dicts_listings: list[dict],
         if listing.get('property', {}).get('building', {}) != None:
             building_state = listing.get('property', {}).get('building', {}).get('condition')
         else:
-           building_state = None 
+           building_state = None
+
+        is_compound = None
+        if not is_compound_sale(listing):
+            is_compound = 'single'
+        else:
+            is_compound = 'compound'
+
 
         #Extract info from listings into a dictionary
         relevant_info = {'id': id,
@@ -182,7 +189,8 @@ def get_relevant_info(list_dicts_listings: list[dict],
                          'Surface area of the plot of land': surface_area_plot,
                          'Number of facades': facades,
                          'Swimming pool': is_pool,
-                         'State of the building': building_state
+                         'State of the building': building_state,
+                         'Compound Listing': is_compound
                         }
 
         # Add dictionary for listing to our list.

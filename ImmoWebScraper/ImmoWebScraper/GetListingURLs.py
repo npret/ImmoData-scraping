@@ -1,7 +1,7 @@
 import requests
 from requests import Session
 from bs4 import BeautifulSoup
-from HelperFunctions import get_soup
+from ImmoWebScraper.HelperFunctions import get_soup
 from multiprocessing import Pool, get_context
 from time import perf_counter
 
