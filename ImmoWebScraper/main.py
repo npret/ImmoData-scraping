@@ -24,7 +24,7 @@ if __name__ == "__main__":
 
     # Finally load data in pd.DataFrame, saves df to csv file
 
-    #data = parse_listing_info(relevant_dicts)
+    data = parse_listing_info(relevant_dicts)
 
 
 

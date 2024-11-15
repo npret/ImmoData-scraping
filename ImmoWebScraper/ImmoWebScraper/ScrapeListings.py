@@ -122,7 +122,7 @@ def quick_parse(url_list: list[str], num_processes: int = None) -> list[dict]:
             listing_dicts.extend(result)
             individual_urls.extend(urls)
 
-    with open('./ImmoWebScraper/Data/url_individual.txt', 'w') as file:
+    with open('./Data/url_individual.txt', 'w') as file:
         for url in individual_urls:
             file.write(url + "\n")
 
