@@ -1,10 +1,9 @@
 # Imports
 
-from GetListingURLs import get_url_list, quick_get_urls
-from GetListingDetails import get_dict_from_url
-from CreateDataFrame import parse_listing_info
-from requests import Session
-import pandas as pd
+from ImmoWebScraper.GetListingURLs import quick_get_urls
+from ImmoWebScraper.ScrapeListings import quick_parse
+from ImmoWebScraper.ParseListingDict import quick_relevant
+from ImmoWebScraper.CreateDataFrame import parse_listing_info
 
 # Main script
 
@@ -25,7 +24,6 @@ if __name__ == "__main__":
 
     # Parse to pd.DataFrame
     df = parse_listing_info(relevant_info_dicts)
-    df.to_csv('ImmowebScrapingResult.csv')
 
 
 # Get URLs

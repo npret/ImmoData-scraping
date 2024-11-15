@@ -1,13 +1,22 @@
 import requests
 from requests import Session
 from bs4 import BeautifulSoup
-from HelperFunctions import get_soup
+from ImmoWebScraper.ImmoWebScraper.HelperFunctions import get_soup
 from multiprocessing import Pool, get_context
 from time import perf_counter
 
 def get_url_list(page_number: int,
                   headers: dict[str:str] = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',} ,
                   session: Session = requests.Session()) -> list[str]:
+    """
+    Function receives a page number from ImmoWeb search results to contact, returns URLs for listings on page.
+
+    : param page_number: int: Page number in search results to scrape.
+    : param headers: (optional, dict): Dict containing user agent specifications for get request.
+    : param session: (optional, requests.Session()): Requests Session() object to use.
+
+    : returns: list: List of real estate listings from ImmoWeb search.
+    """
 
     url_list = []
 
@@ -27,11 +36,18 @@ def get_url_list(page_number: int,
                         print(f"not found link {link}")
 
     except Exception as e:
-        print(f"Error occurred on page {page_number + 1}: {e}")
+        print(f"Error occurred on page {page_number}: {e}")
 
     return url_list
 
 def quick_get_urls(num_pages:int) -> list[str]:
+    """
+    Function allowing to perform get_url_list on a range of ImmoWeb search result pages, using multiprocessing. Writes URLs to txt file.
+
+    : param num_pages: int: Number of search result pages to scrape for listing URLs.
+
+    : return: list: List of real estate listings on the search result pages.
+    """
     ctx = get_context("spawn")
     with ctx.Pool(processes=10) as pool:
         results = pool.map(get_url_list, range(1, num_pages + 1))
@@ -40,11 +56,11 @@ def quick_get_urls(num_pages:int) -> list[str]:
     for page_urls in results:
         url_list.extend(page_urls)
 
-    with open('url.txt', 'w') as f:
+    with open('../Data/url.txt', 'w') as f:
          for url in url_list:
               f.write(url +"\n")
 
-    print(len(url_list))
+    print(f"{len(url_list)} listing URLs retrieved.")
     return url_list
 
 

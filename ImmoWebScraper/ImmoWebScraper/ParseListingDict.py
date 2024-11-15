@@ -1,15 +1,8 @@
 # Imports
 
-import requests
-from requests import Session
-from bs4 import BeautifulSoup
-import json
-import re
-from HelperFunctions import get_soup
-from multiprocessing import get_context, cpu_count, Pool
-from GetListingURLs import quick_get_urls, get_url_list
-from time import perf_counter
+from multiprocessing import get_context, Pool
 
+<<<<<<< HEAD:GetListingDetails.py
 # Functions
 
 def get_dict_from_url(url: str, headers: dict[str:str], session: Session, line_number: int) -> dict:
@@ -68,26 +61,19 @@ def quick_parse(url_list: list[str], num_processes: int = None) -> list[dict]:
 
     if num_processes is None:
         num_processes = cpu_count()  # Use the number of available CPUs by default
+=======
+def quick_relevant(list_dicts_listings: list[dict],
+                   num_processes: int = None) -> list[dict]:
+>>>>>>> 1b01d66 (Major restructuring and combining of code):ImmoWebScraper/ImmoWebScraper/ParseListingDict.py
     
-    url_index_ranges = [range(i, len(url_list), num_processes) for i in range(num_processes)]
-    
-    listing_dicts = []
-    individual_urls = []
+    """
+    Function allowing to perform parsing with get_relevant_info using multiprocessing.
 
-    with get_context('spawn').Pool(processes=num_processes) as pool:
-        results = pool.starmap(read_parse_listings, [(url_list, url_index_range) for url_index_range in url_index_ranges])
+    : param list_dicts_listings: list: List of dictionaries containing ImmoWeb listing information for each property.
+    : param num_processes: int: Number of processes to use in multiprocessing.
 
-        for result, urls in results:
-            listing_dicts.extend(result)
-            individual_urls.extend(urls)
-
-    with open('url_individual.txt', 'w') as file:
-        for url in individual_urls:
-            file.write(url + "\n")
-
-    return listing_dicts
-
-def quick_relevant(list_dicts_listings: list[dict], num_processes: int = None) -> list[dict]:
+    : return: list: List of dicts with required information.
+    """
 
     if num_processes is None:
         num_processes = cpu_count()  # Use the number of available CPUs by default
@@ -104,7 +90,17 @@ def quick_relevant(list_dicts_listings: list[dict], num_processes: int = None) -
             
     return relevant_dicts
 
-def get_relevant_info(list_dicts_listings: list[dict], dict_index_range) -> list[dict]:
+def get_relevant_info(list_dicts_listings: list[dict],
+                      dict_index_range) -> list[dict]:
+    
+    """
+    Function to extract required information from listing dictionaries.
+
+    : param list_dicts_listings: list: List of dictionaries containing ImmoWeb listing information for each property.
+    : param dict_index_range: range: Range of dictionaries to handle from the list, for multiprocessing.
+
+    : return: List of dicts containing required information.
+    """
     
     # List will contain dictionaries for each listing containing relevant info
     relevant_info_list = []
@@ -152,7 +148,7 @@ def get_relevant_info(list_dicts_listings: list[dict], dict_index_range) -> list
         is_furnished = None
         furnished_status = listing.get('transaction', {}).get('sale', {}).get('isFurnished')
         if furnished_status is not None and furnished_status != "None" and furnished_status != "":
-            #furnished_status = furnished_status.lower()
+            furnished_status = furnished_status.lower()
             if furnished_status == "yes":
                 is_furnished = 1
             else:
@@ -256,6 +252,7 @@ def get_relevant_info(list_dicts_listings: list[dict], dict_index_range) -> list
         # Add dictionary for listing to our list.
         relevant_info_list.append(relevant_info)
 
+<<<<<<< HEAD:GetListingDetails.py
     return relevant_info_list
 
 def is_compound_sale(classified_dict: dict) -> bool:
@@ -301,3 +298,6 @@ if __name__ == "__main__":
     print(relevant[0])
     print(relevant[-1])
     print(f"\nTime spent inside the multi loop: {perf_counter() - start_time_multi} seconds.")  
+=======
+    return relevant_info_list
+>>>>>>> 1b01d66 (Major restructuring and combining of code):ImmoWebScraper/ImmoWebScraper/ParseListingDict.py
