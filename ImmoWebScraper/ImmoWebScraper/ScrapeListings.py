@@ -7,8 +7,8 @@ import json
 import re
 from time import perf_counter
 from multiprocessing import get_context, cpu_count, Pool
-from ImmoWebScraper.ImmoWebScraper.HelperFunctions import get_soup
-from ImmoWebScraper.ImmoWebScraper.GetListingURLs import quick_get_urls, get_url_list
+from HelperFunctions import get_soup
+from GetListingURLs import quick_get_urls, get_url_list
 
 # Functions
 
@@ -122,7 +122,7 @@ def quick_parse(url_list: list[str], num_processes: int = None) -> list[dict]:
             listing_dicts.extend(result)
             individual_urls.extend(urls)
 
-    with open('../Data/url_individual.txt', 'w') as file:
+    with open('./ImmoWebScraper/Data/url_individual.txt', 'w') as file:
         for url in individual_urls:
             file.write(url + "\n")
 

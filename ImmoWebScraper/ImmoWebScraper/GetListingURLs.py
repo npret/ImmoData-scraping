@@ -1,7 +1,7 @@
 import requests
 from requests import Session
 from bs4 import BeautifulSoup
-from ImmoWebScraper.ImmoWebScraper.HelperFunctions import get_soup
+from HelperFunctions import get_soup
 from multiprocessing import Pool, get_context
 from time import perf_counter
 
@@ -56,7 +56,7 @@ def quick_get_urls(num_pages:int) -> list[str]:
     for page_urls in results:
         url_list.extend(page_urls)
 
-    with open('../Data/url.txt', 'w') as f:
+    with open('./ImmoWebScraper/Data/url.txt', 'w') as f:
          for url in url_list:
               f.write(url +"\n")
 

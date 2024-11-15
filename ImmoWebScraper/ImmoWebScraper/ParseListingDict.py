@@ -1,8 +1,10 @@
 # Imports
 
-from multiprocessing import get_context, Pool
+from multiprocessing import get_context, cpu_count, Pool
+import json
+from GetListingURLs import quick_get_urls
+from ScrapeListings import quick_parse
 
-<<<<<<< HEAD:GetListingDetails.py
 # Functions
 
 def get_dict_from_url(url: str, headers: dict[str:str], session: Session, line_number: int) -> dict:
@@ -61,10 +63,6 @@ def quick_parse(url_list: list[str], num_processes: int = None) -> list[dict]:
 
     if num_processes is None:
         num_processes = cpu_count()  # Use the number of available CPUs by default
-=======
-def quick_relevant(list_dicts_listings: list[dict],
-                   num_processes: int = None) -> list[dict]:
->>>>>>> 1b01d66 (Major restructuring and combining of code):ImmoWebScraper/ImmoWebScraper/ParseListingDict.py
     
     """
     Function allowing to perform parsing with get_relevant_info using multiprocessing.
@@ -86,7 +84,7 @@ def quick_relevant(list_dicts_listings: list[dict],
         results = pool.starmap(get_relevant_info, [(list_dicts_listings, dict_index_range) for dict_index_range in dict_index_ranges])
 
         for result in results:
-            relevant_dicts_dicts.extend(result)
+            relevant_dicts.extend(result)
             
     return relevant_dicts
 
@@ -107,6 +105,8 @@ def get_relevant_info(list_dicts_listings: list[dict],
     
     # Iterate over each listing in the main dictionary.
     for i in dict_index_range:
+
+        print(f"Parsing listing dict {i}")
         
         listing = list_dicts_listings[i]
 
@@ -136,23 +136,26 @@ def get_relevant_info(list_dicts_listings: list[dict],
 
         # Need to make sure what the different status posibilies are
         is_kitchen_equipped = None
-        kitchen_equipped_status = listing.get('property', {}).get('kitchen', {}).get('type')
-        if kitchen_equipped_status is not None and kitchen_equipped_status != "None" and kitchen_equipped_status != "":
-            kitchen_equipped_status = kitchen_equipped_status.lower()
-            if kitchen_equipped_status == "installed":
-                is_kitchen_equipped = 1
-            else:
-                is_kitchen_equipped = 0
+        if listing.get('property', {}).get('kitchen', {}) != None:
+            kitchen_equipped_status = listing.get('property', {}).get('kitchen', {}).get('type')
+            if kitchen_equipped_status is not None and kitchen_equipped_status != "None" and kitchen_equipped_status != "":
+                kitchen_equipped_status = kitchen_equipped_status.lower()
+                if kitchen_equipped_status in ["uninstalled", "usa uninstalled"]:
+                    is_kitchen_equipped = 0
+                else:
+                    is_kitchen_equipped = 1
+        else:
+            is_kitchen_equipped = None
 
         # Need to double check status possibilities
         is_furnished = None
         furnished_status = listing.get('transaction', {}).get('sale', {}).get('isFurnished')
-        if furnished_status is not None and furnished_status != "None" and furnished_status != "":
-            furnished_status = furnished_status.lower()
-            if furnished_status == "yes":
-                is_furnished = 1
-            else:
-                is_furnished = 0
+        if furnished_status:
+            is_furnished = 1
+        elif furnished_status == None:
+            is_furnished = None
+        else:
+            is_furnished = 0
 
         is_fireplace = None
         fireplace_status = listing.get('property', {}).get('fireplaceExists')
@@ -190,30 +193,16 @@ def get_relevant_info(list_dicts_listings: list[dict],
 
         #surface_land + living area
         surface_area_plot = None
-
-        def safe_convert(value):
-        # Check if the value is a number and not string 'None' or empty
-            if value and value != 'None':
-                try:
-                    return float(value)  # convert to float
-                except ValueError:
-                    return None  # Return None if can't be converted
-            return None  # Return None if value is 'None' or None
-
-        # Convert living_area and surface_land safely for math reasons
-        living_area = safe_convert(living_area)
-        surface_land = safe_convert(surface_land)
-
-        # Calculate surface_area_plot
-        if living_area is not None and surface_land is not None:
-            surface_area_plot = living_area + surface_land
-        elif living_area is None and surface_land is not None:
-            surface_area_plot = surface_land
-        elif living_area is not None and surface_land is None:
-            surface_area_plot = living_area
+        if listing.get('property', {}).get('land', {}) != None:
+            surface_area_plot = listing.get('property', {}).get('land', {}).get('surface')
+        else:
+           surface_area_plot = None 
 
         facades = None
-        facades = listing.get('property', {}).get('building', {}).get('facadeCount')
+        if listing.get('property', {}).get('building', {}) != None:
+            facades = listing.get('property', {}).get('building', {}).get('facadeCount')
+        else:
+            facades = None
 
         is_pool = None
         pool_status = listing.get('property', {}).get('hasSwimmingPool')
@@ -224,8 +213,11 @@ def get_relevant_info(list_dicts_listings: list[dict],
                 is_pool = 0
 
         building_state = None
-        building_state = listing.get('property', {}).get('building', {}).get('condition')
-        
+        if listing.get('property', {}).get('building', {}) != None:
+            building_state = listing.get('property', {}).get('building', {}).get('condition')
+        else:
+           building_state = None 
+
         #Extract info from listings into a dictionary
         relevant_info = {'id': id,
                          'Locality': locality,
@@ -252,6 +244,7 @@ def get_relevant_info(list_dicts_listings: list[dict],
         # Add dictionary for listing to our list.
         relevant_info_list.append(relevant_info)
 
+<<<<<<< HEAD
 <<<<<<< HEAD:GetListingDetails.py
     return relevant_info_list
 
@@ -301,3 +294,19 @@ if __name__ == "__main__":
 =======
     return relevant_info_list
 >>>>>>> 1b01d66 (Major restructuring and combining of code):ImmoWebScraper/ImmoWebScraper/ParseListingDict.py
+=======
+    return relevant_info_list
+
+if __name__ == "__main__":
+
+    with open("list_of_dicts.json", "r") as file:
+        listing_dicts = json.load(file)
+
+    relevant_info = quick_relevant(listing_dicts)
+
+    print(f"Number of relevant info dicts created {len(relevant_info)}")
+    print(relevant_info[-1])
+
+    with open("./ImmoWebScraper/Data/relevant_dicts.json", "w+") as file:
+        json.dump(relevant_info, file)
+>>>>>>> e8c431b (Working Scraper and Data created)
