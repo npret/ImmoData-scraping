@@ -48,7 +48,7 @@ Packages used:
 - re
 - pandas
 
-## **Installation-Environment setup
+## **Installation-Environment setup**
 
 You can create a virtual environment for the script using venv.
 ```shell
