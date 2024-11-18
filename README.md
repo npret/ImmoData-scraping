@@ -25,7 +25,7 @@ My personal contributions to this project can be found in the contributors secti
 
 The repository contains multiple branches
 - Main: contains the code for scraping the chosen website
-- KevinDataClean: my working branch, containing in addition a jupyter notebook used for data cleaning and start of exploratory data analysis
+- nicole_cleandata: my working branch, containing my data cleaning solution and csv file with cleaned dataset.
 - Other working branches for contributors
 
 ## **Description**
